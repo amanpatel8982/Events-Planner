@@ -8,6 +8,8 @@ import Gallery from "./pages/Gallery";
 import Services from "./pages/Services";
 import Stories from "./pages/Stories";
 import MorePages from "./pages/MorePages";
+import Login from "./pages/Login";
+import Hero from "./components/Hero";
 
 const App = () => {
   return (
@@ -22,6 +24,7 @@ const App = () => {
           <Route path="/services" element={<Services />} />
           <Route path="/stories" element={<Stories />} />
           <Route path="/morePages" element={<MorePages />} />
+          <Route path="/login" element={<Login/>} />
         </Routes>
       </BrowserRouter>
     </>
