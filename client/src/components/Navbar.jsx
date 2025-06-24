@@ -1,25 +1,28 @@
 import React from "react";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import logo from "../assets/logo.png";
 const Navbar = () => {
+  const navigate = useNavigate();
+
   return (
     <>
-      <nav className=" bg-transperent h-35 w-full flex items-center absolute top-0 right-0 justify-around">
-        <ul className="flex justify-center gap-14 text-[16px]  font-medium">
-          <li><Link className="text-black" to={"/"}>HOME</Link></li>
-          <li><Link className="text-black" to={"about"}>ABOUT</Link></li>
-          <li><Link className="text-black" to={"stories"}>STORIES</Link></li>
-          <li><Link className="text-black" to={"morePages"}>MOREPAGES</Link></li>
-          <li><Link className="text-black" to={"wedding"}>WEDDING</Link></li>
-          <li><Link className="text-black" to={"services"}>SERVICES</Link></li>
-          <li><Link className="text-black" to={"gallery"}>GALLERY</Link></li>
-          <li><Link className="text-black" to={"element"}>ELEMENT</Link></li>
-          <li><Link className="text-black" to={"contact"}>CONTACT</Link></li>
-          <li><Link className="text-black" to="/login">LOGIN</Link></li>
-
-        </ul>
-      </nav>
-
+      <div className="bg-transparent flex justify-center gap-10  text-xl items-center sticky top-0 z-99">
+        <Link to={"/about"}>About</Link>
+        <Link to={"/services"}>Our Services</Link>
+        <Link to={"/stories"}>Client Stories</Link>
+        <Link to={"/"}>
+          <img src={logo} alt="" className="h-[5em]" />
+        </Link>
+        <Link to={"/gallery"}>Gallery</Link>
+        <Link to={"/contact"}>Contact Us</Link>
+        <button
+          className="border p-3 rounded-md"
+          onClick={() => navigate("login")}
+        >
+          {" "}
+          Login to Plan {" "}
+        </button>
+      </div>
     </>
   );
 };

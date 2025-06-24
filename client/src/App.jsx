@@ -1,15 +1,11 @@
 import React from "react";
 import Navbar from "./components/Navbar";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Home from "./pages/Home";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import Gallery from "./pages/Gallery";
-import Services from "./pages/Services";
-import Stories from "./pages/Stories";
-import MorePages from "./pages/MorePages";
-import Login from "./pages/Login";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Hero from "./components/Hero";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Contact from "./pages/Contact";
 
 const App = () => {
   return (
@@ -18,13 +14,9 @@ const App = () => {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/gallery" element={<Gallery />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/stories" element={<Stories />} />
-          <Route path="/morePages" element={<MorePages />} />
-          <Route path="/login" element={<Login/>} />
         </Routes>
       </BrowserRouter>
     </>
