@@ -47,7 +47,7 @@ const Register = () => {
           className="absolute -z-1 opacity-80 w-full"
         />
 
-        <div className="min-h-screen w-200 flex items-center justify-center font-serif mt-70">
+        <div className="min-h-screen w-200 flex items-center justify-center font-serif mt-40">
           <div className="bg-white/10 backdrop-blur-xl p-10 rounded-2xl shadow-2xl w-full max-w-md border border-yellow-500">
             <h2 className="text-3xl text-center font-bold text-pink-500 mb-6 drop-shadow-md">
               Register
