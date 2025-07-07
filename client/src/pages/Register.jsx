@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import flower from "../assets/flower.jpg";
 import { useNavigate } from "react-router-dom";
+import api from "../config/api";
+import { toast } from "react-hot-toast";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -17,10 +19,16 @@ const Register = () => {
     setRegisterData((previousData) => ({ ...previousData, [name]: value }))
   }
 
-  const handelSubmit = (e) => {
+  const handelSubmit = async(e) => {
     e.preventDefault();
 
     console.log(registerData);
+    try{
+      const res = await api.post("/auth/register",registerData);
+      toast.success(res.data.message)
+    } catch(error){
+         toast.error(error.message)  
+    }
 
     setRegisterData({
       fullName: "",

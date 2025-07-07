@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import rose from "../assets/rose.jpg";
 import { useNavigate } from "react-router-dom";
+import api from "../config/api";
+import { toast } from "react-hot-toast";
+
 
 const Login = () => {
   const navigate = useNavigate();
@@ -8,13 +11,26 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const formSubmitKro = (e) => {
+  const formSubmitKro = async(e) => {
     e.preventDefault();
     const logindata = {
-      Email: email,
-      Password: password,
+      email: email,
+      password: password,
     }
     console.log(logindata);
+     try{
+      const res = await api.post("/auth/login",logindata);
+      toast.success(res.data.message);
+      setPassword("")
+      setEmail("");
+      navigate('/userDashboard')
+      
+    } catch(error){
+     toast.error(
+        `Error : ${error.response?.status || error.message} | ${
+          error.response?.data.message || ""
+        }`
+      );    };
   }
 
   return (
@@ -23,7 +39,7 @@ const Login = () => {
         <img
           src={rose}
           alt=""
-          className="absolute -z-1 opacity-80 w-full"
+          className="absolute -z-1 opacity-80 w-full h-234"
         />
 
         <div className="min-h-screen w-200 flex items-center justify-center font-serif mt-30">

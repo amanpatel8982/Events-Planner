@@ -1,0 +1,41 @@
+import dotenv from "dotenv"; // npm package hai jo .env file me likhe variables ko use karne ke help krta hai/ ye app ke secret values (jaise password , API key) ko secure rakhne me madad krta hia
+dotenv.config();// .env file se variables load karta hai  / speed ke sath variables ko load krta hai/ .env file me likhe sabhi variables ko process.env  me avaible kra deti hai
+
+
+import express from 'express'; //Server banane ke liye framework ,Express.js framework ko import karti hai ,
+import morgan from 'morgan'; // ek HTTP request logger middleware hai/ jab koe user request bhejta hia to morgan uska detail consloe me dikhata hai / de debugging ke liye helpgul hota hai
+import {sample, sample1,sample2} from "./src/middlewares/authmiddleware.js"
+import  connectDB  from "./src/config/db.js";
+import AuthRouter from "./src/routes/authroute.js";
+import cors from 'cors'; // jo request aa rhi hai vo kaha se aa rhi hai kaun bhej rha hai 
+
+
+const app = express(); // check url states // eske though hum routes aur middlewares define karte hai / core app = express ke niche hi likha rhana chahiye
+app.use(cors({origin:"http://localhost:5173",credentials: true}));
+
+
+app.use(express.json()); // Ye middleware hai jo incoming request ka data (body) JSON format me convert karta hai
+app.use(morgan("dev"));  // 
+
+app.use(sample,sample1,sample2)
+
+
+
+app.use("/auth",AuthRouter); // Jab bhi URL /auth se start hoga, tab AuthRouter me jo bhi routes define hain, wo use honge.//auth/login, /auth/register wagaira
+
+
+
+app.use((err,req,res,next)=>{ // error handling middleware hai
+    const errorMessage = err.message || "Internal server Error" //err.message agar nahi mile to default message: "Internal server Error".
+    const errorCode = err.statusCode || 500 //err.statusCode agar nahi mile to default code: 500.
+    res.status(errorCode).json({message:errorMessage})
+})
+
+
+ const port = process.env.PORT || 5000; // process .env =>  Variable ko access karne ka tarika
+
+app.listen(port,()=>{ // Server start karta hai aur DB se connect hota hai
+    console.log("Server started at", port);
+    connectDB(); 
+
+})

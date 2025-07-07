@@ -5,13 +5,14 @@ import { MdPhoneIphone } from "react-icons/md";
 import { FaRegFaceGrinHearts } from "react-icons/fa6";
 
 
-
-
+function handleform(event){
+  console.log("form was submitted");
+}
 
 const Contact = () => {
   return (
     <>
-      <div className="bg-[url(back.jpg)] h-screen w-screen bg-cover bg-center ">
+      <div className="bg-[url(back.jpg)] h-screen w-screen bg-cover bg-center absolute ">
       <div>
         <h1 className=" text-white text-center pt-50 text-7xl font-bold font-serif">Contact us</h1>
       </div>
@@ -43,31 +44,42 @@ const Contact = () => {
 
 
 
-       <div className="bg-black">
-           <div className="bg-black-50  flex h-160 w-250 ms-60 mt-30">
-                <div className="bg-amber-300 h-full w-full">
+       <div className="bg-black ">
+           <div className="bg-black-50 flex  h-160 w-250  ms-65 mt-30">
+                <div className="bg-[url(gallery-5.jpg)] rounded-2xl h-full w-full ">
     
                  </div>
 
-                 <div className="bg-amber-950 h-full w-full">
+                 <div className=" border-2 border-white h-full rounded-2xl w-full">
 
-                    <div className=" ms-10 mt-25">
-                        <h1 className="text-white text-5xl font-serif mb-5 ">Let's Chat</h1>
+                    <div className=" ms-10 mt-15">
+                        <h1 className="text-white text-5xl font-serif mb- ">Let's Chat</h1>
                         <input type="text"
                          placeholder=" Name"
                          className="text-black ps-3 text-2xl bg-amber-50 h-10 w-70 mt-10 rounded-2xl" />
+
+                         
                         <input type="text"
                          placeholder=" Email"
                          className="text-black ps-3 text-2xl bg-amber-50 h-10 w-70 mt-10 rounded-2xl" />
-                        <input type="text"
-                         placeholder="Buget"
-                         className="text-black ps-3 text-2xl bg-amber-50 h-10 w-70 mt-10 rounded-2xl" />
-                        <input type="text"
-                         placeholder=" Message"
-                         className="text-black ps-3 text-2xl bg-amber-50 h-10 w-70 mt-10 rounded-2xl" />
+
+
+                        <select
+                         placeholder="Budget"
+                         className=" ps-3 text-2xl bg-amber-50 h-10 w-70 mt-10 rounded-2xl">
+                          <option value="">Budget</option>
+                          <option value="">Prime</option>
+                          <option value="">Digital</option>
+                          <option value="">Ninja</option>
+                         </select>
+
+                         <textarea name="" id="" placeholder="Message"
+                         className="text-black ps-3 pb-20 bg-amber-50 h-30 w-100 mt-10 rounded-2xl"
+                         >Message</textarea>
+                       
                          
-                         <div className="  mt-20">
-                            <button className="text-white h-10 w-40 rounded bg-blue-900">SEND MESSAGE</button>
+                         <div className="  mt-15">
+                            <button  onClick={handleform} className="text-white h-10 w-40 rounded cursor-pointer bg-blue-900">SEND MESSAGE</button>
                          </div>
                         
                     </div>
@@ -90,10 +102,10 @@ const Contact = () => {
                         
                     </div>
                     <div>
-                        <div className="text-white ms-69 mt-20 text-4xl mb-3"><FaRegFaceGrinHearts/></div>
-                        <h1 className="text-white text-5xl ps-50 font-serif">Wedding</h1><br />
-                        <h1 className="text-white text-2xl ps-15 font-serif">Lorem ipsum dolor sit amet consectetur.</h1> <br />
-                        <p className="text-white">Lorem ipsum dolor,  sit amet consectetur sit amet consectetur adipisicing <br /> <span className="ms-20">elit. sit amet consectetur Perferendis, maiores?</span> </p>
+                        <div className="text-white ms-65 mt-20 text-5xl mb-3"><FaRegFaceGrinHearts/></div>
+                        <h1 className="text-white text-6xl ps-41 font-serif">Wedding</h1><br />
+                        <h1 className="text-white text-2xl ps-16 font-serif">Lorem ipsum dolor sit amet consectetur.</h1> <br />
+                        <p className="text-white ps-4">Lorem ipsum dolor,  sit amet consectetur sit amet consectetur adipisicing <br /> <span className="ms-20">elit. sit amet consectetur Perferendis, maiores?</span> </p>
 
                     </div>
                     <div className="relative left-40">
