@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import api from "../config/api";
+import Sidebar from "../components/Sidebar";
 
 const UserDashboard = () => {
   const [userdata, setUserData] = useState({
@@ -13,7 +14,7 @@ const UserDashboard = () => {
     try {
       const res = await api.get("/user/profile");
       setUserData(res.data.data);
-      toast.success(res.data.message);
+       toast.success(res.data.message);
     } catch (error) {
       toast.error(
         `Error : ${error.response?.status || error.message} | ${
@@ -29,6 +30,7 @@ const UserDashboard = () => {
 
   return (
     <>
+  
       <div className="flex flex-col items-center justify-center bg-gray-100">
         <h1 className="text-2xl font-bold">User Dashboard</h1>
         <p className="text-gray-600">Welcome to your dashboard!</p>
@@ -45,7 +47,14 @@ const UserDashboard = () => {
           <b>Phone :</b> {userdata.phone}
         </h3>
       </div>
+
+        <div className="relative bottom-65">
+             <Sidebar />
+        </div>
+       
+      
     </>
+    
   );
 };
 

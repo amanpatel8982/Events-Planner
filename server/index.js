@@ -10,6 +10,7 @@ import UserRouter from "./src/routes/userRoutes.js";
 import cors from 'cors'; // jo request aa rhi hai vo kaha se aa rhi hai kaun bhej rha hai 
 import cookieParser from "cookie-parser";
 
+
 const app = express(); // check url states // eske though hum routes aur middlewares define karte hai / core app = express ke niche hi likha rhana chahiye
 app.use(cors({origin:"http://localhost:5173",credentials: true}));
 

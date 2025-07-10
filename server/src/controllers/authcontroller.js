@@ -21,12 +21,15 @@ export const Register = async(req, res,next)=>{
     }
 
     const hashedPassword = await bcrypt.hash(password,10); // 
+
+    
     
     const newUser = await User.create({  // User hamara mongodb ke andar create ho rha hai 
         fullName,
         email,
         phone,
         password:hashedPassword,
+        photo:profilePic,
     });
 
     res.status(201).json({message:"Registration Successfull"})
