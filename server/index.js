@@ -9,6 +9,7 @@ import AuthRouter from "./src/routes/authroute.js";
 import UserRouter from "./src/routes/userRoutes.js";
 import cors from 'cors'; // jo request aa rhi hai vo kaha se aa rhi hai kaun bhej rha hai 
 import cookieParser from "cookie-parser";
+import cloudinary from "./src/config/cloudinary.js";
 
 
 const app = express(); // check url states // eske though hum routes aur middlewares define karte hai / core app = express ke niche hi likha rhana chahiye
@@ -41,8 +42,15 @@ app.use((err,req,res,next)=>{ // error handling middleware hai
 
  const port = process.env.PORT || 5000; // process .env =>  Variable ko access karne ka tarika
 
-app.listen(port,()=>{ // Server start karta hai aur DB se connect hota hai
+app.listen(port, async()=>{ // Server start karta hai aur DB se connect hota hai
     console.log("Server started at", port);
-    connectDB(); 
 
+    try {
+    await connectDB();
+    await cloudinary.api.resources({ max_results: 1 });
+    console.log("Cloudinary Connected");
+  } catch (error) {
+    console.log(error);
+    process.exit(1);
+  }
 });

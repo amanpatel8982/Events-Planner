@@ -8,8 +8,8 @@ import Register from "./pages/Register";
 import Contact from "./pages/Contact";
 import {Toaster} from "react-hot-toast";
 import UserDashboard from "./pages/userDashboard";
-import Profile  from "./pages/Profile";
-import Setting  from "./pages/Setting";
+import UserDashboardEdit from "./pages/userDashboardEdit";
+
 
 
 const App = () => {
@@ -24,8 +24,7 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/userDashboard" element={<UserDashboard />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/setting" element={<Setting />} />
+          <Route path="/userDashboardEdit" element={<UserDashboardEdit />} />
 
         </Routes>
       </BrowserRouter>
