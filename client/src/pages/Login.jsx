@@ -23,7 +23,7 @@ const Login = () => {
       toast.success(res.data.message);
       setPassword("")
       setEmail("");
-      navigate('/userDashboard')
+      navigate("/dashboard");
       
     } catch(error){
      toast.error(
