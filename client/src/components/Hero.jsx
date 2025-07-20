@@ -3,7 +3,7 @@ import background from "../assets/background.jpg";
 const Hero = () => {
   return (
     <>
-      <div className="mt-[-11%] relative h-198 flex justify-center items-center">
+      <div className="mt-[-11%] relative h-224 flex justify-center items-center">
         <img src={background} alt="" className="absolute inset-0 w-full h-full -z-10 object-cover"/>
 
         <div className="absolute inset-0 bg-black opacity-50">

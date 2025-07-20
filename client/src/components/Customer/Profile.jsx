@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import api from "../../config/api";
-import { CiEdit } from "react-icons/ci";
-import { useNavigate } from "react-router-dom";
+import { FaUserEdit } from "react-icons/fa";
+import ProfileEditModal from "./profileEditModal";
+import AccountDeactivateModal from "./AccountDeactivateModal";
 
 const Profile = () => {
-  const navigate = useNavigate();
   const [userdata, setUserData] = useState("");
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
 
   const fetchUserData = async () => {
     try {
       const res = await api.get("/user/profile");
       setUserData(res.data.data);
-      toast.success(res.data.message);
     } catch (error) {
       toast.error(
         `Error : ${error.response?.status || error.message} | ${
@@ -24,71 +25,102 @@ const Profile = () => {
 
   useEffect(() => {
     fetchUserData();
-  }, []);
+  }, [isEditModalOpen]);
 
   return (
     <>
-     <div className=" flex  bg-gray-100 bg-gradient-to-r from-pink-600 to-purple-500 p-4 ">
-        <h1 className="text-2xl font-bold">Profile</h1>
-         <button
-                  className="absolute top-45 right-1 bg-purple-500 border p-2 rounded-lg flex gap-2 justify-center items-center hover:bg-rose-400 text-lg mr-4 cursor-pointer text-white border-white"
-                  onClick={() => navigate("/userDashboardEdit")}
-                >
-                  {" "}
-                  <CiEdit />
-                  Edit
-                </button>
+      <div className="flex justify-between bg-gradient-to-r from-pink-600 to-purple-600 p-4 shadow-lg">
+        <h1 className="text-3xl font-bold text-white">Profile</h1>
+        <button
+          className="border border-white hover:scale-105 cursor-pointer text-white p-2 rounded-lg font-bold flex gap-2 justify-center items-center hover:bg-pink-600 text-lg"
+          onClick={() => setIsEditModalOpen(true)}
+        >
+          {" "}
+          <FaUserEdit className="text-xl" />
+          Edit
+        </button>
       </div>
 
-      <div className=" p-5 flex">
-        <div className="flex flex-col gap-5  border w-2/7  m-4 rounded-lg p-5">
-          <div className="border relative left-13 w-50 h-50 rounded-full  overflow-hidden">
+      <div className="p-6 flex gap-6 bg-gray-50">
+        <div className="flex flex-col gap-6 border border-gray-200 w-2/7 rounded-xl bg-white shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+          <div className="border-4 border-pink-200 w-48 h-48 rounded-full overflow-hidden m-auto shadow-md">
             <img
               src={userdata.photo}
               alt="profilePic"
-              className="w-50 h-50 object-cover  rounded-full "
+              className="w-full h-full object-cover rounded-full"
             />
           </div>
-          <div>
-            <b>Name :</b> <span>{userdata.fullName}</span>
+          <div className="text-gray-700">
+            <b className="text-pink-700">Name:</b>{" "}
+            <span className="text-gray-800 ml-2">{userdata.fullName}</span>
           </div>
-          <div>
-            <b> Email:</b> <span>{userdata.email}</span>
+          <div className="text-gray-700">
+            <b className="text-pink-700">Email:</b>{" "}
+            <span className="text-gray-800 ml-2">{userdata.email}</span>
           </div>
-          <div>
-            <b>Phone:</b> <span>{userdata.phone}</span>
+          <div className="text-gray-700">
+            <b className="text-pink-700">Phone:</b>{" "}
+            <span className="text-gray-800 ml-2">{userdata.phone}</span>
           </div>
         </div>
 
-        <div className="border m-4 p-5 w-5/7 grid gap-5 rounded-lg">
-          <div>
-            <b className="font-extrabold  text-2xl">Additional Information:</b>
-            <hr />
+        <div className="border border-gray-200 p-6 w-5/7 grid gap-4 rounded-xl bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+          <h2 className="text-xl font-semibold text-pink-700 mb-4 border-b border-pink-200 pb-2">
+            Additional Information
+          </h2>
+          <div className="text-gray-700">
+            <b className="text-purple-700">Gender:</b>{" "}
+            <span className="text-gray-800 ml-2">{userdata.gender}</span>
           </div>
-          <div>
-            <b>Gender :</b> <span>{userdata.gender}</span>
+          <div className="text-gray-700">
+            <b className="text-purple-700">Occupation:</b>{" "}
+            <span className="text-gray-800 ml-2">{userdata.occupation}</span>
           </div>
-          <div>
-            <b>Occuption:</b> <span>{userdata.occuption}</span>
+          <div className="text-gray-700">
+            <b className="text-purple-700">Address:</b>{" "}
+            <span className="text-gray-800 ml-2">{userdata.address}</span>
           </div>
-          <div>
-            <b>Address:</b> <span>{userdata.address}</span>
+          <div className="text-gray-700">
+            <b className="text-purple-700">City:</b>{" "}
+            <span className="text-gray-800 ml-2">{userdata.city}</span>
           </div>
-          <div>
-            <b>City :</b> <span>{userdata.city}</span>
+          <div className="text-gray-700">
+            <b className="text-purple-700">District:</b>{" "}
+            <span className="text-gray-800 ml-2">{userdata.district}</span>
           </div>
-          <div>
-            <b>District:</b> <span>{userdata.district}</span>
+          <div className="text-gray-700">
+            <b className="text-purple-700">State:</b>{" "}
+            <span className="text-gray-800 ml-2">{userdata.state}</span>
           </div>
-          <div>
-            <b>State:</b> <span>{userdata.state}</span>
-          </div>
-
-          <div>
-            <b>Representing:</b> <span>{userdata.representing}</span>
+          <div className="text-gray-700">
+            <b className="text-purple-700">Representing:</b>{" "}
+            <span className="text-gray-800 ml-2">{userdata.representing}</span>
           </div>
         </div>
       </div>
+      <button
+        className="border border-red-500 hover:scale-105 mx-5 float-end text-red-500 p-2 rounded-lg font-bold flex gap-2 justify-center items-center hover:bg-red-500 hover:text-white cursor-pointer text-lg"
+        onClick={() => {
+          setIsDeactivateModalOpen(true);
+        }}
+      >
+        Deactivate My acoount
+      </button>
+
+      <ProfileEditModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+        }}
+        oldData={userdata}
+      />
+
+      <AccountDeactivateModal
+        isOpen={isDeactivateModalOpen}
+        onClose={() => {
+          setIsDeactivateModalOpen(false);
+        }}
+      />
     </>
   );
 };
