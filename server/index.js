@@ -10,6 +10,7 @@ import UserRouter from "./src/routes/userRoutes.js";
 import cors from 'cors'; // jo request aa rhi hai vo kaha se aa rhi hai kaun bhej rha hai 
 import cookieParser from "cookie-parser";
 import cloudinary from "./src/config/cloudinary.js";
+import PublicRouter from "./src/routes/publicRouter.js";
 
 
 const app = express(); // check url states // eske though hum routes aur middlewares define karte hai / core app = express ke niche hi likha rhana chahiye
@@ -25,7 +26,9 @@ app.use(morgan("dev"));  //
 
 
 app.use("/auth",AuthRouter); // Jab bhi URL /auth se start hoga, tab AuthRouter me jo bhi routes define hain, wo use honge.//auth/login, /auth/register wagaira
-app.use("/user",UserRouter)
+app.use("/user",UserRouter);
+app.use("/public",PublicRouter);
+
 
 
 app.get("/", (req, res) => {

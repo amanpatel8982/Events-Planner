@@ -3,13 +3,47 @@ import { CiLocationOn } from "react-icons/ci";
 import { AiOutlineMail } from "react-icons/ai";
 import { MdPhoneIphone } from "react-icons/md";
 import { FaRegFaceGrinHearts } from "react-icons/fa6";
+import { toast } from "react-hot-toast";
+import { useState } from "react";
+import api from "../config/api.js"
 
 
-function handleform(event){
-  console.log("form was submitted");
-}
 
 const Contact = () => {
+ const [contactData, SetContactData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    SetContactData((previousData) => ({ ...previousData, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await api.post("/public/contactus", contactData);
+      toast.success(res.data.message);
+      SetContactData({
+        fullName: "",
+        email: "",
+        phone: "",
+        message: "",
+      });
+    } catch (error) {
+      toast.error(
+        `Error : ${error.response?.status || error.message} | ${
+          error.response?.data.message || ""
+        }`
+      );
+    }
+  };
+
   return (
     <>
       <div className="bg-[url(back.jpg)] h-screen w-screen bg-cover bg-center absolute ">
@@ -54,33 +88,46 @@ const Contact = () => {
 
                     <div className=" ms-10 mt-15">
                         <h1 className="text-white text-5xl font-serif mb- ">Let's Chat</h1>
+                        <form onSubmit={handleSubmit}>
+                        <div>
                         <input type="text"
                          placeholder=" Name"
+                         name="fullName"
+                         value={contactData.fullName}
+                         onChange={handleChange}
                          className="text-black ps-3 text-2xl bg-amber-50 h-10 w-70 mt-10 rounded-2xl" />
 
                          
                         <input type="text"
                          placeholder=" Email"
+                         name="email"
+                          value={contactData.email}
+                         onChange={handleChange}
                          className="text-black ps-3 text-2xl bg-amber-50 h-10 w-70 mt-10 rounded-2xl" />
 
 
-                        <select
-                         placeholder="Budget"
-                         className=" ps-3 text-2xl bg-amber-50 h-10 w-70 mt-10 rounded-2xl">
-                          <option value="">Budget</option>
-                          <option value="">Prime</option>
-                          <option value="">Digital</option>
-                          <option value="">Ninja</option>
-                         </select>
+                        <input
+                         placeholder="number"
+                         name="phone"
+                          value={contactData.phone}
+                         onChange={handleChange}
+                         className=" ps-3 text-2xl bg-amber-50 h-10 w-70 mt-10 rounded-2xl"
+                         
+                        />
 
-                         <textarea name="" id="" placeholder="Message"
+                         <textarea name="message" 
+                          placeholder="Message"
+                          value={contactData.message}
+                         onChange={handleChange} 
                          className="text-black ps-3 pb-20 bg-amber-50 h-30 w-100 mt-10 rounded-2xl"
                          >Message</textarea>
                        
                          
                          <div className="  mt-15">
-                            <button  onClick={handleform} className="text-white h-10 w-40 rounded cursor-pointer bg-blue-900">SEND MESSAGE</button>
+                            <button   className="text-white h-10 w-40 rounded cursor-pointer bg-blue-900">SEND MESSAGE</button>
                          </div>
+                         </div>
+                        </form>
                         
                     </div>
 
