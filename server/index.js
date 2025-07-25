@@ -3,7 +3,7 @@ dotenv.config();// .env file se variables load karta hai  / speed ke sath variab
 
 
 import express from 'express'; //Server banane ke liye framework ,Express.js framework ko import karti hai ,
-import morgan from 'morgan'; // ek HTTP request logger middleware hai/ jab koe user request bhejta hia to morgan uska detail consloe me dikhata hai / de debugging ke liye helpgul hota hai
+import morgan from 'morgan'; // ek HTTP request logger middleware hai/ jab koe user request bhejta hia to morgan uska detail console me dikhata hai / de debugging ke liye helpgul hota hai
 import  connectDB  from "./src/config/db.js";
 import AuthRouter from "./src/routes/authroute.js";
 import UserRouter from "./src/routes/userRoutes.js";

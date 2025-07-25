@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { IoIosCloseCircle, IoIosSave } from "react-icons/io";
 import { FaCamera } from "react-icons/fa";
 import api from "../../config/api";
-import {toast} from 'react-hot-toast'
+import { toast } from "react-hot-toast";
+import { useAuth } from "../../context/AuthContext";
 
 const indianStates = [
   "Andhra Pradesh",
@@ -36,6 +37,7 @@ const indianStates = [
 ];
 
 const ProfileEditModal = ({ isOpen, onClose, oldData }) => {
+  const { setUser } = useAuth();
   const [userdata, setUserData] = useState({
     fullName: "",
     email: "",
@@ -88,7 +90,8 @@ const ProfileEditModal = ({ isOpen, onClose, oldData }) => {
         },
       });
       toast.success(res.data.message);
-      setUserData(res.data.data);
+      setUser(res.data.data);
+      sessionStorage.setItem("EventUser", JSON.stringify(res.data.data));
       onClose();
     } catch (error) {
       toast.error(
@@ -222,10 +225,12 @@ const ProfileEditModal = ({ isOpen, onClose, oldData }) => {
                 className="p-2 border rounded-lg border-rose-300 w-full"
               >
                 <option value="N/A">N/A</option>
-                {indianStates ? (indianStates.map(
-                  (rajya,i)=><option value={rajya} key={i}>{rajya}</option>
-                )
-                  
+                {indianStates ? (
+                  indianStates.map((rajya, i) => (
+                    <option value={rajya} key={i}>
+                      {rajya}
+                    </option>
+                  ))
                 ) : (
                   <option value={""}>No states available</option>
                 )}

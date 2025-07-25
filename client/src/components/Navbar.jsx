@@ -12,7 +12,7 @@ const Navbar = () => {
         <Link to={"/services"} className="border rounded-[5px] hover:bg-pink-500 hover:text-white p-3 font-serif  bg-white">Our Services</Link>
         <Link to={"/stories"} className="border rounded-[5px] hover:bg-pink-500 hover:text-white p-3 font-serif  bg-white">Client Stories</Link>
         <Link to={"/"}>
-          <img src={logo} alt="" className="h-[5em]" />
+          <img src={logo} alt="" className="h-[5em]" />    
         </Link>
         <Link to={"/gallery"}className="border rounded-[5px] hover:bg-pink-500 hover:text-white p-3 font-serif  bg-white" >Gallery</Link>
         <Link to={"/contact"} className="border rounded-[5px] hover:bg-pink-500 hover:text-white p-3 font-serif bg-white">Contact Us</Link>
