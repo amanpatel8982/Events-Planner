@@ -1,24 +1,27 @@
-import Contact from "../models/contactusModal.js";
-
+import Contact from "../models/contactModel.js";
 
 export const ContactUs = async (req, res, next) => {
   try {
-    const { fullName, email, phone, message } = req.body;
+    const { name, email, subject, message, phone } = req.body;
 
-    if (!fullName || !email || !phone || !message) {
-      const error = new Error("Please Fill All Details");
+    if (!name || !email || !subject || !message || !phone) {
+      const error = new Error("All fields are required");
       error.statusCode = 400;
       return next(error);
     }
 
-    const newContactUs = await Contact.create({
-          fullName,
-          email,
-          phone,
-          message,
-        });
-    
-        res.status(200).json({ message: "Thank You For Contact Us", data: newContactUs });
+    const newContact = await Contact.create({
+      name,
+      email,
+      subject,
+      message,
+      phone,
+      status: "Pending",
+    });
+
+    res.status(201).json({
+      message: `Thanks for Contacting Us. You will receive a Response soon at ${newContact.email}`,
+    });
   } catch (error) {
     next(error);
   }
