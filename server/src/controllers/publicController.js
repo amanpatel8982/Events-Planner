@@ -2,18 +2,17 @@ import Contact from "../models/contactModel.js";
 
 export const ContactUs = async (req, res, next) => {
   try {
-    const { name, email, subject, message, phone } = req.body;
+    const { fullName, email, message, phone } = req.body;
 
-    if (!name || !email || !subject || !message || !phone) {
+    if (!fullName || !email || !message || !phone) {
       const error = new Error("All fields are required");
       error.statusCode = 400;
       return next(error);
     }
 
     const newContact = await Contact.create({
-      name,
+      fullName,
       email,
-      subject,
       message,
       phone,
       status: "Pending",

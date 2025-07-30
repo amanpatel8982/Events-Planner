@@ -82,6 +82,7 @@ export const Logout =(req, res)=>{
 
 
 export const Update =(req, res)=>{
+  
     res.json({message:"User Register Done"});
 }
 

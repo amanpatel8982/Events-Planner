@@ -64,7 +64,7 @@ const ContactViewModal = ({ isOpen, onClose, Query }) => {
 
     setLoading(true);
     try {
-      const res = await api.put(`/admin/contacts/${query._id}`, {
+      const res = await api.put(`/admin/contactus/${query._id}`, {
         status: updateData.status,
         reply: updateData.reply
       });

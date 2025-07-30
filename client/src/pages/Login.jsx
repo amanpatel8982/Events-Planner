@@ -3,35 +3,45 @@ import rose from "../assets/rose.jpg";
 import { useNavigate } from "react-router-dom";
 import api from "../config/api";
 import { toast } from "react-hot-toast";
+import { useAuth } from "../context/AuthContext";
 
 
 const Login = () => {
   const navigate = useNavigate();
+  const { setUser, setIsLogin, setIsAdmin,user, isUser, isAdmin } = useAuth();
+
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const formSubmitKro = async(e) => {
+  const formSubmitKro = async (e) => {
     e.preventDefault();
     const logindata = {
       email: email,
       password: password,
-    }
-    console.log(logindata);
-     try{
-      const res = await api.post("/auth/login",logindata);
+    };
+
+    try {
+      const res = await api.post("/auth/login", logindata);
       toast.success(res.data.message);
-      setPassword("")
+      setPassword("");
       setEmail("");
-      navigate("/dashboard");
-      
-    } catch(error){
-     toast.error(
+      setUser(res.data.data);
+      sessionStorage.setItem("EventUser",JSON.stringify(res.data.data));
+      setIsLogin(true);
+      res.data.data.role === "Admin"
+        ? (setIsAdmin(true), navigate("/adminpanel"))
+        : navigate("/dashboard");
+    } catch (error) {
+      toast.error(
         `Error : ${error.response?.status || error.message} | ${
           error.response?.data.message || ""
         }`
-      );    };
-  }
+      );
+      console.log(error);
+    }
+    console.log(logindata);
+  };
 
   return (
     <>

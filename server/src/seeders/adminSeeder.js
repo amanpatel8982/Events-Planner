@@ -16,7 +16,7 @@ const seedAdmin = async () => {
     password: adminPassword,
     phone: "9431897901",
     photo: "https://placehold.co/600x400?text=A",
-    gender: "Male",
+    gender: "male",
     representing: "N/A",
     occupation: "N/A",
     address: "N/A",

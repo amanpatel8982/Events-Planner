@@ -25,6 +25,7 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
 
     try {
       const res = await api.post("/public/contactus", contactData);
