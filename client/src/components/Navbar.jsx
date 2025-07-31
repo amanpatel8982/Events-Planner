@@ -1,9 +1,30 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate ,useLocation} from "react-router-dom";
 import logo from "../assets/logo.png";
+import { useAuth } from "../context/AuthContext";
+import { useEffect } from "react";
+import { useState } from "react";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const { user, isLogin, isAdmin } = useAuth();
+  const [navBg, setNavBg] = useState(false);
+   const location = useLocation().pathname;
+  console.log(location);
+
+  const NavBarDesign = () => {
+    location === "/" || location === "/login" || location === "/register"
+      ? setNavBg(false)
+      : setNavBg(true);
+  };
+
+  const handleClick = () => {
+    isAdmin ? navigate("/adminpanel") : navigate("/dashboard");
+  };
+
+  useEffect(() => {
+    NavBarDesign();
+  }, [location]);
 
   return (
     <>
@@ -16,13 +37,28 @@ const Navbar = () => {
         </Link>
         <Link to={"/gallery"}className="border rounded-[5px] hover:bg-pink-500 hover:text-white p-3 font-serif  bg-white" >Gallery</Link>
         <Link to={"/contact"} className="border rounded-[5px] hover:bg-pink-500 hover:text-white p-3 font-serif bg-white">Contact Us</Link>
-        <button
-          className="border p-3 rounded-md hover:bg-pink-500 hover:text-white font-serif w-30 cursor-pointer bg-white"
-          onClick={() => navigate("login")}
-        >
-          {" "}
-          Login {" "}
-        </button>
+        
+            {isLogin ? (
+          <div
+            className="flex gap-3 items-center cursor-pointer"
+            onClick={handleClick}
+          >
+            <img
+              src={user.photo}
+              alt="User Dp"
+              className="h-10 w-10 border rounded-full object-cover"
+            />
+            <span className="text-pink-500">{user.fullName}</span>
+          </div>
+        ) : (
+          <button
+            className="border p-3 rounded-md"
+            onClick={() => navigate("login")}
+          >
+            {" "}
+            Login to Plan your event{" "}
+          </button>
+        )}
       </div>
     </>
   );

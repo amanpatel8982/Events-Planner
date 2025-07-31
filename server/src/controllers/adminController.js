@@ -16,6 +16,7 @@ export const UpdateContacts = async (req, res, next) => {
     const QueryId = req.params.Qid;
     const { status, reply } = req.body;
 
+
     const updatedQuery = await Contact.findByIdAndUpdate(
       QueryId,
       {
@@ -24,6 +25,9 @@ export const UpdateContacts = async (req, res, next) => {
       },
       { new: true }
     );
+    if (!updatedQuery) {
+      return res.status(404).json({ message: "Contact query not found" });
+    }
 
     const statusColors = {
       Pending: "#f0ad4e",
