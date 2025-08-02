@@ -9,12 +9,18 @@ import {
 } from "react-icons/fa";
 import api from "../../config/api";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const Sidebar = ({ active, setActive }) => {
+  const { setUser, setIsLogin, setIsAdmin, user } = useAuth();
   const navigate = useNavigate();
   const handleLogout = async () => {
-    const res = await api.get("/auth/logout")
-    navigate("/")
+    const res = await api.get("/auth/logout");
+    setUser("");
+    sessionStorage.removeItem("EventUser");
+    setIsLogin(false);
+    setIsAdmin(false);
+    navigate("/");
   };
 
   return (

@@ -1,6 +1,8 @@
 import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import genToken from "../utils/auth.js";
+import Deactivation from "../models/deactivationModel.js";
+
 
 export const Register = async(req, res,next)=>{
     try{
@@ -75,17 +77,115 @@ export const Login = async (req, res, next) => {
   }
 };
 
-
-export const Logout =(req, res)=>{
-    res.json({message:"User Register Done"});
-}
-
-
-export const Update =(req, res)=>{
-  
-    res.json({message:"User Register Done"});
-}
+export const LogoutUser = (req, res, next) => {
+  try {
+    res.cookie("IDCard", "", { maxAge: 0 });
+    res.status(200).json({ message: "Logout Successfull" });
+  } catch (error) {
+    next(error);
+  }
+};
 
 
+export const UpdateUser = async (req, res, next) => {
+  try {
+    const currentUser = req.user;
+    const {
+      fullName,
+      phone,
+      gender,
+      occupation,
+      address,
+      city,
+      state,
+      district,
+      representing,
+    } = req.body;
+
+    if (!currentUser) {
+      const error = new Error("User Not Found !! Login Again");
+      error.statusCode = 401;
+      return next(error);
+    }
+    const photo = req.file;
+    let picture;
+    if (photo) {
+      const b64 = Buffer.from(photo.buffer).toString("base64");
+      const dataURI = `data:${photo.mimetype};base64,${b64}`;
+
+      const result = await cloudinary.uploader.upload(dataURI, {
+        folder: "eventPlannerPictures",
+        width: 500,
+        height: 500,
+        crop: "fill",
+      });
+      picture = result.secure_url;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      currentUser._id,
+      {
+        fullName,
+        phone,
+        gender,
+        occupation,
+        address,
+        city,
+        state,
+        district,
+        representing,
+        photo: picture || currentUser.photo,
+      },
+      { new: true }
+    );
+
+    res.status(200).json({ message: "Profile Updated", data: updatedUser });
+  } catch (error) {
+    next(error);
+  }
+};
 
 
+export const deleteUser = async (req, res, next) => {
+  try {
+    const userId = req.user;
+    const { reason, feedback, confirmPassword } = req.body; // Or from params
+
+
+
+    const currentUser = await User.findById(userId);
+    if (!currentUser) {
+      const error = new Error("User not found");
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    // 2. Verify password
+    const isPasswordValid = await bcrypt.compare(confirmPassword, currentUser.password);
+    if (!isPasswordValid) {
+      const error = new Error("Invalid password");
+      error.statusCode = 401;
+      return next(error);
+    }
+
+    // 3. Deactivate user (preserve password hash)
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { status: "Inactive" }, // Only update status
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      const error = new Error("Deactivation failed");
+      error.statusCode = 500;
+      return next(error);
+    }
+
+    // 4. Log deactivation reason
+    await Deactivation.create({ userId, reason, feedback });
+
+    res.status(200).json({ message: "Account deactivated" });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -3,10 +3,10 @@ import background from "../assets/background.jpg";
 const Hero = () => {
   return (
     <>
-      <div className="mt-[-11%] relative h-224 flex justify-center items-center">
+      <div className="mt-[-11%] relative h-224 flex justify-center items-center ">
         <img src={background} alt="" className="absolute inset-0 w-full h-full -z-10 object-cover"/>
 
-        <div className="absolute inset-0 bg-black opacity-50">
+        <div className="absolute inset-0 bg-black opacity-20">
 
         </div>
         <div className="grid gap-20 justify-items-center  bg-gradient-to rounded-xl p-10 w-3/4">

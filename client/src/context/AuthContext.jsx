@@ -12,19 +12,6 @@ export const AuthProvider = (props) => {
   useEffect(() => {
     setIsLogin(!!user);
     setIsAdmin(user?.role === "Admin");
-
-    // if (user) {
-    //   setIsLogin(true);
-    // } else {
-    //   setIsLogin(false);
-    // }
-    
-
-    // if (user && user.role === "Admin") {
-    //   setIsAdmin(true);
-    // } else {
-    //   setIsAdmin(false);
-    // }
   }, [user]);
 
   const value = {
