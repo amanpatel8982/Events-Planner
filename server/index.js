@@ -12,6 +12,8 @@ import cookieParser from "cookie-parser";
 import cloudinary from "./src/config/cloudinary.js";
 import PublicRouter from "./src/routes/publicRouter.js";
 import AdminRouter from "./src/routes/adminRoutes.js";
+import hallRouter from "./src/routes/hallRoute.js";
+
 
 
 const app = express(); // check url states // eske though hum routes aur middlewares define karte hai / core app = express ke niche hi likha rhana chahiye
@@ -30,6 +32,7 @@ app.use("/auth",AuthRouter); // Jab bhi URL /auth se start hoga, tab AuthRouter 
 app.use("/user",UserRouter);
 app.use("/public",PublicRouter);
 app.use("/admin",AdminRouter)
+app.use("/hall", hallRouter)
 
 
 

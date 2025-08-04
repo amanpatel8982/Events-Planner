@@ -1,6 +1,6 @@
 import express from "express";
 import { GetAllContacts, UpdateContacts } from "../controllers/adminController.js";
-import { isAdmin, Protect } from "../middlewares/authmiddleware.js";
+import { isAdmin, Protect } from "../middlewares/authMiddleware.js";
  
 const router = express.Router();
 

@@ -8,6 +8,8 @@ import Bookings from "../components/Admin/Bookings";
 import CustomerQueries from "../components/Admin/CustomerQueries";
 import CustomerFeedback from "../components/Admin/CustomerFeedback";
 import Packages from "../components/Admin/Packages";
+import BanquetHall from "../components/Admin/BanquetHall";
+import CateringService from "../components/Admin/CateringService";
 
 
 const AdminPannel = () => {
@@ -26,13 +28,15 @@ const AdminPannel = () => {
     <>
       <div className="flex">
         <Sidebar active={active} setActive={setActive} />
-        <div className="w-full">
+        <div className="w-full mt-[15vh]">
           {active === "overview" && <Overview />}
           {active === "packages" && <Packages />}
           {active === "customers" && <Customers />}
           {active === "bookings" && <Bookings />}
           {active === "cusQueries" && <CustomerQueries />}
           {active === "cusFeedback" && <CustomerFeedback />}
+          {active === "banquetHall" && <BanquetHall />}
+          {active === "cateringService" && <CateringService />}
         </div>
       </div>
     </>

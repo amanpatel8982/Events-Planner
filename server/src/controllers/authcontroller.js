@@ -59,7 +59,7 @@ export const Login = async (req, res, next) => {
       return next(error);
     }
 
-    const isVerified = await bcrypt.compare(password, user.password);
+    const isVerified = await bcrypt.compare(password, user.password);// Password ko verify kr rha hai
 
     if (!isVerified) {
       const error = new Error("Invalid Username or Password");
@@ -67,7 +67,7 @@ export const Login = async (req, res, next) => {
       return next(error);
     }
 
-    genToken(user._id, res);
+    genToken(user._id, res); // Token generate kr rha hai aur response me bhej rha hai
 
     res
       .status(200)

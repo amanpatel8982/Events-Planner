@@ -12,7 +12,6 @@ const router = express.Router();
 
 router.get("/profile", Protect, GetProfile );
 router.put("/deactivate",Protect, deleteUser)
-
 router.put("/update", Protect,upload.single("picture"), UpdateProfile);
 
 export default router;

@@ -49,11 +49,11 @@ const Login = () => {
         <img
           src={rose}
           alt=""
-          className="absolute -z-1 opacity-80 w-full h-234"
+          className="absolute -z-1 opacity-80 w-full h-274"
         />
 
         <div className="min-h-screen w-200 flex items-center justify-center font-serif mt-30">
-          <div className="bg-white/10 backdrop-blur-xl p-10 rounded-2xl shadow-2xl w-full max-w-md border border-yellow-500">
+          <div className="bg-white/10  relative top-20 backdrop-blur-xl p-10 rounded-2xl shadow-2xl w-full max-w-md border border-yellow-500">
             <h2 className="text-3xl text-center font-bold text-pink-500 mb-6 drop-shadow-md">
               Login
             </h2>
