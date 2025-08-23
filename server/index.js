@@ -22,7 +22,7 @@ app.use(cors({origin:"http://localhost:5173",credentials: true}));
 
 app.use(express.json()); // Ye middleware hai jo incoming request ka data (body) JSON format me convert karta hai
 app.use(cookieParser());
-app.use(morgan("dev"));  // 
+app.use(morgan("dev")); //
 
 
 
