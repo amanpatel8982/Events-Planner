@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { FaEye, FaTrashAlt, FaEdit } from "react-icons/fa";
 import { IoAddCircleOutline } from "react-icons/io5";
+import AddBanquetHall from "./modals/AddBanquetHallmodel.jsx";
 
 const BanquetHall = () => {
   const [banquetHalls, setBanquetHall] = useState("");

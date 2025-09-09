@@ -1,9 +1,15 @@
 import React from "react";
 import { motion } from "framer-motion";
 import background from "../assets/back4.jpg";
+import Contact from "../pages/Contact";
+import About from "../pages/About";
+import Services from "../pages/Service";
+import Gallery from "../pages/Gallery"; 
 
 const Hero = () => {
   return (
+
+    <>
     <div className="relative h-screen w-full flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <img
@@ -81,7 +87,19 @@ const Hero = () => {
           </motion.button>
         </div>
       </motion.div>
+  
     </div>
+
+    
+    <About />
+    <Services />
+    <Gallery />
+    <Contact />
+   
+
+    </>
+    
+ 
   );
 };
 

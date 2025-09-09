@@ -35,13 +35,13 @@ const Navbar = () => {
       } w-full fixed top-0 z-50 transition-all duration-300`}
     >
       <div className="max-w-8xl mx-auto px-4  sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+        <div className="flex justify-between ms-10 items-center h-20">
           {/* Logo */}
           <Link to="/" className="flex-shrink-0">
             <motion.img
               src={logo}
               alt="Company Logo"
-              className="h-14"
+              className="h-25"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6 }}
@@ -49,7 +49,7 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-2">
+          <div className="hidden md:flex items-center font-serif space-x-2">
             <NavLink to="/about" text="About" />
             <NavLink to="/service" text="Our Services" />
             <NavLink to="/gallery" text="Gallery" />
