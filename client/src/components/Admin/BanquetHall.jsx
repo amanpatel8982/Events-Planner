@@ -2,14 +2,13 @@ import React from "react";
 import { useState } from "react";
 import { FaEye, FaTrashAlt, FaEdit } from "react-icons/fa";
 import { IoAddCircleOutline } from "react-icons/io5";
-import AddBanquetHallModal from "./modals/AddBanquetHallmodel";
 
 const BanquetHall = () => {
   const [banquetHalls, setBanquetHall] = useState("");
-  const [addBanquetHallModel, setAddBanquetHallModel] = useState("false");
-  const [viewBanquetHallModel, setViewBanquetHallModel] = useState("false");
-  const [editBanquetHallModel, setEditBanquetHallModel] = useState("false");
-  const [deleteBanquetHallModel, setDeleteBanquetHallModel] = useState("false");
+  const [addBanquetHallModal, setAddBanquetHallModal] = useState(false);
+  const [viewBanquetHallModal, setViewBanquetHallModal] = useState(false);
+  const [editBanquetHallModal, setEditBanquetHallModal] = useState(false);
+  const [deleteBanquetHallModal, setDeleteBanquetHallModal] = useState(false);
 
   return (
     <>
@@ -17,17 +16,11 @@ const BanquetHall = () => {
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Banquet Halls</h2>
         <button
           className="border rounded px-4 flex gap-3 items-center text-lg border-green-500 bg-green-500 text-white hover:bg-transparent hover:text-green-500"
-          onClick={() => setAddBanquetHallModel(true)}
+          onClick={() => setAddBanquetHallModal(true)}
         >
           {" "}
           <IoAddCircleOutline /> Add New Hall
         </button>
-        <AddBanquetHallModal
-        isOpen={addBanquetHallModel}
-        onClose={() => setAddBanquetHallModel(false)}
-        onSubmit={BanquetHall}
-      />
-
       </div>
       <div className="m-3">
         <table className="min-w-full bg-white rounded-lg p-2">
@@ -53,19 +46,19 @@ const BanquetHall = () => {
                   <td className="py-2 px-4  space-x-2">
                     <button
                       className=" text-blue-400 px-3 py-1 rounded hover:text-blue-600"
-                      onClick={() => setViewBanquetHallModel(true)}
+                      onClick={() => setViewBanquetHallModal(true)}
                     >
                       <FaEye />
                     </button>
                     <button
                       className=" text-yellow-400 px-3 py-1 rounded hover:text-yellow-600"
-                      onClick={() => setEditBanquetHallModel(true)}
+                      onClick={() => setEditBanquetHallModal(true)}
                     >
                       <FaEdit />
                     </button>
                     <button
                       className=" text-red-400 px-3 py-1 rounded hover:text-red-600"
-                      onClick={() => setDeleteBanquetHallModel(true)}
+                      onClick={() => setDeleteBanquetHallModal(true)}
                     >
                       <FaTrashAlt />
                     </button>
@@ -74,14 +67,21 @@ const BanquetHall = () => {
               ))
             ) : (
               <>
-              <tr>
-                <td colSpan={6} className="text-center p-3 text-red-500" >--No Banquets Halls are available --</td>
-              </tr>
+                <tr>
+                  <td colSpan={6} className="text-center p-3 text-red-500">
+                    --No Banquets Halls are available --
+                  </td>
+                </tr>
               </>
             )}
           </tbody>
         </table>
       </div>
+
+      <AddBanquetHall
+        isOpen={addBanquetHallModal}
+        onClose={() => setAddBanquetHallModal(false)}
+      />
     </>
   );
 };
