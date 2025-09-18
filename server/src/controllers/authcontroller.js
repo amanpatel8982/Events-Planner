@@ -24,7 +24,7 @@ export const Register = async(req, res,next)=>{
 
     const hashedPassword = await bcrypt.hash(password,10); // 
 
-       const profilePic = `https://placehold.co/600x400?text=${fullName.charAt(0).toUpperCase()}`
+       const profilePic = `https://placehold.co/600x400?text=${fullName.charAt(0).toUpperCase()}` /// edrgergetrtger
 
     
     
