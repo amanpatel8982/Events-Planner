@@ -52,7 +52,7 @@ export const Login = async (req, res, next) => {
       return next(error);
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email.trim().toLowerCase() });
     if (!user) {
       const error = new Error("User Not Registered");
       error.statusCode = 400;
@@ -69,9 +69,13 @@ export const Login = async (req, res, next) => {
 
     genToken(user._id, res); // Token generate kr rha hai aur response me bhej rha hai
 
-    res
-      .status(200)
-      .json({ message: `Welcome Back ${user.fullName}`, data: user });
+    const safeUser = user.toObject();
+    delete safeUser.password;
+
+    res.status(200).json({
+      message: `Welcome Back ${user.fullName}`,
+      data: safeUser,
+    });
   } catch (error) {
     next(error);
   }

@@ -1,222 +1,225 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import {
+  CalendarDays,
+  ChevronRight,
+  Menu,
+  UserRound,
+  X,
+} from "lucide-react";
+import {
+  Link,
+  NavLink,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import logo from "../assets/logo.png";
 import { useAuth } from "../context/AuthContext";
 
+const navigation = [
+  { label: "About", to: "/about" },
+  { label: "Services", to: "/service" },
+  { label: "Gallery", to: "/gallery" },
+  { label: "Contact", to: "/contact" },
+];
+
 const Navbar = () => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const { user, isLogin, isAdmin } = useAuth();
-  const [navBg, setNavBg] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const location = useLocation().pathname;
-
-  const NavBarDesign = () => {
-    location === "/" || location === "/login" || location === "/register"
-      ? setNavBg(false)
-      : setNavBg(true);
-  };
-
-  const handleClick = () => {
-    isAdmin ? navigate("/adminpanel") : navigate("/dashboard");
-  };
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    NavBarDesign();
-  }, [location]);
+    const handleScroll = () => setScrolled(window.scrollY > 24);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [pathname]);
+
+  const isTransparent = pathname === "/" && !scrolled && !isMenuOpen;
+  const dashboardPath = isAdmin ? "/adminpanel" : "/dashboard";
 
   return (
-    <motion.nav
-      initial={{ y: -80 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`${
-        navBg ? "bg-white shadow-md" : "bg-gradient-to-r from-pink-50 to-purple-50"
-      } w-full fixed top-0 z-50 transition-all duration-300`}
+    <header
+      className={`fixed inset-x-0 top-0 z-50 border-b transition-colors duration-200 ${
+        isTransparent
+          ? "border-transparent bg-transparent text-white"
+          : "border-black/5 bg-white/95 text-[var(--ink)] shadow-[0_8px_30px_rgba(24,32,28,0.06)] backdrop-blur-xl"
+      }`}
     >
-      <div className="max-w-8xl mx-auto px-4  sm:px-6 lg:px-8">
-        <div className="flex justify-between ms-10 items-center h-20">
-          {/* Logo */}
-          <Link to="/" className="flex-shrink-0">
-            <motion.img
-              src={logo}
-              alt="Company Logo"
-              className="h-25"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6 }}
-            />
-          </Link>
-
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center font-serif space-x-2">
-            <NavLink to="/about" text="About" />
-            <NavLink to="/service" text="Our Services" />
-            <NavLink to="/gallery" text="Gallery" />
-            <NavLink to="/contact" text="Contact Us" />
-
-            {isLogin ? (
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                onClick={handleClick}
-                className="flex items-center ml-4 cursor-pointer"
-              >
-                <img
-                  src={user.photo}
-                  alt="User"
-                  className="h-10 w-10 rounded-full object-cover border-2 border-pink-500"
-                />
-                <span className="ml-2 text-pink-600 font-semibold">
-                  {user.fullName}
-                </span>
-              </motion.div>
-            ) : (
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => navigate("login")}
-                className="ml-4 px-5 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-xl font-semibold shadow-md hover:shadow-lg transition-all"
-              >
-                Plan Your Event
-              </motion.button>
-            )}
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center">
-            {isLogin && (
-              <div
-                className="flex items-center mr-3 cursor-pointer"
-                onClick={handleClick}
-              >
-                <img
-                  src={user.photo}
-                  alt="User"
-                  className="h-8 w-8 rounded-full object-cover border-2 border-pink-500"
-                />
-              </div>
-            )}
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-pink-600 focus:outline-none"
+      <div className="page-shell flex h-[76px] items-center justify-between">
+        <Link to="/" className="flex min-w-0 items-center gap-3" aria-label="EverAfter Events home">
+          <img
+            src={logo}
+            alt=""
+            className="h-11 w-11 shrink-0 rounded-full bg-white object-contain ring-1 ring-black/5"
+          />
+          <span className="min-w-0">
+            <span className="block truncate font-serif text-lg leading-5 sm:text-xl">
+              EverAfter Events
+            </span>
+            <span
+              className={`hidden text-[10px] font-bold uppercase sm:block ${
+                isTransparent ? "text-white/65" : "text-[var(--muted)]"
+              }`}
             >
-              <svg
-                className="h-7 w-7"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                {isMenuOpen ? (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                ) : (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                )}
-              </svg>
+              Weddings & celebrations
+            </span>
+          </span>
+        </Link>
+
+        <nav className="hidden items-center gap-1 lg:flex" aria-label="Main navigation">
+          {navigation.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({ isActive }) =>
+                `rounded-lg px-3 py-2 text-sm font-semibold transition ${
+                  isActive
+                    ? isTransparent
+                      ? "bg-white/12 text-white"
+                      : "bg-[#f4ecef] text-[var(--rose)]"
+                    : isTransparent
+                      ? "text-white/80 hover:bg-white/10 hover:text-white"
+                      : "text-[#46504a] hover:bg-black/[0.035] hover:text-[var(--ink)]"
+                }`
+              }
+            >
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        <div className="hidden items-center gap-2 lg:flex">
+          {isLogin ? (
+            <button
+              type="button"
+              onClick={() => navigate(dashboardPath)}
+              className={`flex h-11 items-center gap-2 rounded-lg border px-2.5 text-sm font-bold transition ${
+                isTransparent
+                  ? "border-white/35 bg-white/10 text-white hover:bg-white/20"
+                  : "border-[var(--line)] bg-white text-[var(--ink)] hover:border-[var(--sage)]"
+              }`}
+            >
+              {user?.photo ? (
+                <img
+                  src={user.photo}
+                  alt=""
+                  className="h-7 w-7 rounded-full object-cover"
+                />
+              ) : (
+                <UserRound size={19} />
+              )}
+              <span className="max-w-28 truncate">
+                {user?.fullName?.split(" ")[0] || "Dashboard"}
+              </span>
+              <ChevronRight size={16} />
             </button>
-          </div>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className={`inline-flex h-11 items-center rounded-lg px-3.5 text-sm font-bold transition ${
+                  isTransparent
+                    ? "text-white hover:bg-white/10"
+                    : "text-[#46504a] hover:bg-black/[0.035]"
+                }`}
+              >
+                Sign in
+              </Link>
+              <Link
+                to="/contact"
+                className={`inline-flex h-11 shrink-0 items-center gap-2.5 whitespace-nowrap rounded-lg border px-3.5 text-sm font-bold transition duration-200 ${
+                  isTransparent
+                    ? "border-white/20 bg-[var(--rose)] text-white shadow-[0_10px_24px_rgba(38,12,21,0.25)] hover:border-[#b48748] hover:bg-[var(--rose-dark)]"
+                    : "border-[var(--rose)] bg-[var(--rose)] text-white shadow-[0_8px_18px_rgba(102,24,49,0.16)] hover:border-[var(--rose-dark)] hover:bg-[var(--rose-dark)]"
+                }`}
+              >
+                <span
+                  className="grid h-7 w-7 place-items-center rounded-md bg-white/14"
+                  aria-hidden="true"
+                >
+                  <CalendarDays size={16} strokeWidth={2.2} />
+                </span>
+                <span>Plan your event</span>
+              </Link>
+            </>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2 lg:hidden">
+          {isLogin && (
+            <button
+              type="button"
+              onClick={() => navigate(dashboardPath)}
+              aria-label="Open dashboard"
+              className={`grid h-10 w-10 place-items-center rounded-lg border ${
+                isTransparent ? "border-white/30 text-white" : "border-[var(--line)]"
+              }`}
+            >
+              <UserRound size={20} />
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen((open) => !open)}
+            aria-label={isMenuOpen ? "Close navigation" : "Open navigation"}
+            aria-expanded={isMenuOpen}
+            className={`grid h-10 w-10 place-items-center rounded-lg border ${
+              isTransparent ? "border-white/30 text-white" : "border-[var(--line)]"
+            }`}
+          >
+            {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: isMenuOpen ? 1 : 0, y: isMenuOpen ? 0 : -20 }}
-        transition={{ duration: 0.4 }}
-        className={`${
-          isMenuOpen ? "block" : "hidden"
-        } md:hidden bg-white shadow-lg rounded-b-lg`}
-      >
-        <div className="px-3 pt-3 pb-5 space-y-2">
-          <MobileNavLink to="/about" text="About" setIsMenuOpen={setIsMenuOpen} />
-          <MobileNavLink
-            to="/services"
-            text="Our Services"
-            setIsMenuOpen={setIsMenuOpen}
-          />
-          <MobileNavLink
-            to="/stories"
-            text="Client Stories"
-            setIsMenuOpen={setIsMenuOpen}
-          />
-          <MobileNavLink
-            to="/gallery"
-            text="Gallery"
-            setIsMenuOpen={setIsMenuOpen}
-          />
-          <MobileNavLink
-            to="/contact"
-            text="Contact Us"
-            setIsMenuOpen={setIsMenuOpen}
-          />
-          {!isLogin && (
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              onClick={() => {
-                navigate("login");
-                setIsMenuOpen(false);
-              }}
-              className="w-full px-4 py-2 rounded-lg bg-pink-500 text-white font-semibold hover:bg-pink-600"
-            >
-              Login to Plan Your Event
-            </motion.button>
-          )}
+      {isMenuOpen && (
+        <div className="border-t border-[var(--line)] bg-white px-3 pb-5 pt-3 text-[var(--ink)] shadow-xl lg:hidden">
+          <nav className="page-shell grid gap-1" aria-label="Mobile navigation">
+            {navigation.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) =>
+                  `flex items-center justify-between rounded-lg px-3 py-3 text-sm font-bold ${
+                    isActive ? "bg-[#f4ecef] text-[var(--rose)]" : "hover:bg-black/[0.035]"
+                  }`
+                }
+              >
+                {item.label} <ChevronRight size={17} />
+              </NavLink>
+            ))}
+            {!isLogin && (
+              <div className="mt-3 flex flex-col gap-2 border-t border-[var(--line)] pt-4 sm:flex-row sm:justify-end">
+                <Link
+                  to="/login"
+                  className="button-secondary w-full sm:w-auto sm:min-w-28"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  to="/contact"
+                  className="inline-flex min-h-12 w-full items-center justify-center gap-2.5 rounded-lg border border-[var(--rose)] bg-[var(--rose)] px-4 text-sm font-bold text-white shadow-[0_8px_18px_rgba(102,24,49,0.14)] transition hover:border-[var(--rose-dark)] hover:bg-[var(--rose-dark)] sm:w-auto"
+                >
+                  <span
+                    className="grid h-7 w-7 place-items-center rounded-md bg-white/14"
+                    aria-hidden="true"
+                  >
+                    <CalendarDays size={16} strokeWidth={2.2} />
+                  </span>
+                  <span>Plan your event</span>
+                </Link>
+              </div>
+            )}
+          </nav>
         </div>
-      </motion.div>
-    </motion.nav>
-  );
-};
-
-// Reusable Desktop NavLink
-const NavLink = ({ to, text }) => {
-  const location = useLocation();
-  const isActive = location.pathname === to;
-
-  return (
-    <motion.div whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
-      <Link
-        to={to}
-        className={`${
-          isActive
-            ? "text-pink-600 border-b-2 border-pink-500"
-            : "text-gray-700 hover:text-pink-600"
-        } px-3 py-2 text-lg font-medium transition-all`}
-      >
-        {text}
-      </Link>
-    </motion.div>
-  );
-};
-
-// Reusable Mobile NavLink
-const MobileNavLink = ({ to, text, setIsMenuOpen }) => {
-  const location = useLocation();
-  const isActive = location.pathname === to;
-
-  return (
-    <motion.div whileTap={{ scale: 0.97 }}>
-      <Link
-        to={to}
-        onClick={() => setIsMenuOpen(false)}
-        className={`${
-          isActive
-            ? "bg-pink-100 text-pink-600"
-            : "text-gray-700 hover:bg-gray-100 hover:text-pink-600"
-        } block px-3 py-2 rounded-md text-base font-medium`}
-      >
-        {text}
-      </Link>
-    </motion.div>
+      )}
+    </header>
   );
 };
 

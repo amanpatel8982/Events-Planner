@@ -1,119 +1,142 @@
-import React from "react";
 import {
-  FaTachometerAlt,
-  FaBoxes,
-  FaUsers,
-  FaCalendarCheck,
-  FaQuestionCircle,
-  FaCommentDots,
-  FaSignOutAlt,
-} from "react-icons/fa";
-import { FaTent } from "react-icons/fa6";
-import { GiCook } from "react-icons/gi";
+  Building2,
+  CalendarDays,
+  ChefHat,
+  LayoutDashboard,
+  LogOut,
+  MessageSquareText,
+  Package,
+  Star,
+  Users,
+} from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import api from "../../config/api";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import logo from "../../assets/logo.png";
 
-const Sidebar = ({ active, setActive }) => {
-  const { setUser, setIsLogin, setIsAdmin } = useAuth();
+const navigation = [
+  { id: "overview", label: "Overview", icon: LayoutDashboard },
+  { id: "bookings", label: "Bookings", icon: CalendarDays },
+  { id: "customers", label: "Customers", icon: Users },
+  { id: "banquetHall", label: "Venues", icon: Building2 },
+  { id: "cateringService", label: "Catering", icon: ChefHat },
+  { id: "packages", label: "Packages", icon: Package },
+  { id: "cusQueries", label: "Inquiries", icon: MessageSquareText },
+  { id: "cusFeedback", label: "Feedback", icon: Star },
+];
+
+const Sidebar = ({ active, setActive, pendingCount = 0 }) => {
+  const { setUser, setIsLogin, setIsAdmin, user } = useAuth();
   const navigate = useNavigate();
+
   const handleLogout = async () => {
-    const res = await api.get("/auth/logout");
-    setUser("");
-    sessionStorage.removeItem("EventUser");
-    setIsLogin(false);
-    setIsAdmin(false);
-    navigate("/");
+    try {
+      await api.get("/auth/logout");
+    } catch {
+      toast.error("Session closed locally. The server could not be reached.");
+    } finally {
+      setUser("");
+      sessionStorage.removeItem("EventUser");
+      setIsLogin(false);
+      setIsAdmin(false);
+      navigate("/");
+    }
   };
+
+  const renderNavigation = (mobile = false) =>
+    navigation.map((item) => {
+      const Icon = item.icon;
+      const isActive = active === item.id;
+      const showPending = item.id === "bookings" && pendingCount > 0;
+
+      return (
+        <button
+          key={item.id}
+          type="button"
+          onClick={() => setActive(item.id)}
+          className={`flex shrink-0 items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-bold transition ${
+            isActive
+              ? "bg-[var(--rose)] text-white"
+              : mobile
+                ? "border border-[var(--line)] bg-white text-[#4f5953]"
+                : "text-[#59635d] hover:bg-black/[0.04] hover:text-[var(--ink)]"
+          }`}
+          aria-current={isActive ? "page" : undefined}
+          aria-label={
+            showPending ? `${item.label}, ${pendingCount} pending` : item.label
+          }
+        >
+          <Icon size={18} aria-hidden="true" />
+          <span>{item.label}</span>
+          {showPending && (
+            <span
+              className={`ml-auto min-w-5 rounded-full px-1.5 py-0.5 text-center text-[10px] font-extrabold leading-4 ${
+                isActive
+                  ? "bg-white text-[var(--rose)]"
+                  : "bg-[#f5e8ed] text-[var(--rose)]"
+              }`}
+              aria-hidden="true"
+            >
+              {pendingCount > 99 ? "99+" : pendingCount}
+            </span>
+          )}
+        </button>
+      );
+    });
 
   return (
     <>
-      <div className="w-100 bg-gradient-to-b from-slate-50 to-slate-100 border-r border-gray-200 min-h-[87vh] p-4 flex flex-col justify-between shadow-lg">
-        <div>
-          <div className="border-b-2 border-indigo-200 pb-4 h-fit text-center">
-            <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Admin Dashboard
+      <aside className="hidden h-screen w-68 shrink-0 flex-col border-r border-[var(--line)] bg-white p-4 lg:sticky lg:top-0 lg:flex">
+        <Link to="/" className="flex items-center gap-3 px-2 py-2">
+          <img src={logo} alt="" className="h-10 w-10 rounded-full object-contain" />
+          <span>
+            <span className="block font-serif text-lg leading-5">EverAfter</span>
+            <span className="block text-[10px] font-bold uppercase text-[var(--muted)]">
+              Admin workspace
             </span>
+          </span>
+        </Link>
+        <nav className="mt-7 grid gap-1.5 overflow-y-auto" aria-label="Admin sections">
+          {renderNavigation()}
+        </nav>
+        <div className="mt-auto border-t border-[var(--line)] pt-4">
+          <div className="mb-3 px-3">
+            <p className="truncate text-sm font-bold">{user?.fullName || "Administrator"}</p>
+            <p className="text-xs text-[var(--muted)]">Workspace administrator</p>
           </div>
-
-          <div className="py-4 px-2">
-            <ul className="grid gap-3 h-100 overflow-y-auto scrollbar-hide">
-              <li
-                className={`flex items-center gap-3 border border-gray-200 p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-purple-500 hover:text-white hover:shadow-md hover: ${
-                  active === "overview" &&
-                  "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md"
-                }`}
-                onClick={() => setActive("overview")}
-              >
-                <FaTachometerAlt className="text-xl" /> Overview
-              </li>
-              <li
-                className={`flex items-center gap-3 border border-gray-200 p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-purple-500 hover:text-white hover:shadow-md hover: ${
-                  active === "banquetHall" &&
-                  "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md "
-                }`}
-                onClick={() => setActive("banquetHall")}
-              >
-                <FaTent className="text-xl" /> Banquet Hall
-              </li>
-              <li
-                className={`flex items-center gap-3 border border-gray-200 p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-purple-500 hover:text-white hover:shadow-md hover: ${
-                  active === "cateringService" &&
-                  "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md "
-                }`}
-                onClick={() => setActive("cateringService")}
-              >
-                <GiCook className="text-xl" /> Catering Service
-              </li>
-              <li
-                className={`flex items-center gap-3 border border-gray-200 p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-purple-500 hover:text-white hover:shadow-md hover: ${
-                  active === "customers" &&
-                  "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md "
-                }`}
-                onClick={() => setActive("customers")}
-              >
-                <FaUsers className="text-xl" /> Customers
-              </li>
-              <li
-                className={`flex items-center gap-3 border border-gray-200 p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-purple-500 hover:text-white hover:shadow-md hover: ${
-                  active === "bookings" &&
-                  "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md "
-                }`}
-                onClick={() => setActive("bookings")}
-              >
-                <FaCalendarCheck className="text-xl" /> Bookings
-              </li>
-              <li
-                className={`flex items-center gap-3 border border-gray-200 p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-purple-500 hover:text-white hover:shadow-md hover: ${
-                  active === "cusQueries" &&
-                  "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md "
-                }`}
-                onClick={() => setActive("cusQueries")}
-              >
-                <FaQuestionCircle className="text-xl" /> Customer Queries
-              </li>
-              <li
-                className={`flex items-center gap-3 border border-gray-200 p-4 rounded-xl text-lg font-medium cursor-pointer transition-all duration-300 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-purple-500 hover:text-white hover:shadow-md hover: ${
-                  active === "cusFeedback" &&
-                  "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md "
-                }`}
-                onClick={() => setActive("cusFeedback")}
-              >
-                <FaCommentDots className="text-xl" /> Customer Feedback
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div>
           <button
-            className="text-lg text-red-600 font-semibold w-full border-2 border-red-300 p-4 rounded-xl flex gap-3 items-center justify-center hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-300 hover:shadow-lg bg-red-50"
+            type="button"
             onClick={handleLogout}
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-bold text-[#a22742] hover:bg-[#f8eaee]"
           >
-            Logout
-            <FaSignOutAlt className="text-xl" />
+            <LogOut size={18} /> Sign out
           </button>
         </div>
-      </div>
+      </aside>
+
+      <header className="sticky top-0 z-40 border-b border-[var(--line)] bg-white lg:hidden">
+        <div className="flex h-16 items-center justify-between px-4">
+          <Link to="/" className="flex items-center gap-2">
+            <img src={logo} alt="" className="h-9 w-9 rounded-full object-contain" />
+            <span className="font-serif text-lg">Admin workspace</span>
+          </Link>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="grid h-9 w-9 place-items-center rounded-lg border border-[var(--line)] text-[#a22742]"
+            aria-label="Sign out"
+          >
+            <LogOut size={18} />
+          </button>
+        </div>
+        <nav
+          className="flex gap-2 overflow-x-auto border-t border-[var(--line)] px-4 py-2"
+          aria-label="Admin sections"
+        >
+          {renderNavigation(true)}
+        </nav>
+      </header>
     </>
   );
 };

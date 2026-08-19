@@ -40,7 +40,7 @@ const seedAdmin = async () => {
     console.log("Admin User Created Successfully", admin.email);
   }
 
-  process.exit(1);
+  process.exit(0);
 };
 
 seedAdmin();

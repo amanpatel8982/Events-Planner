@@ -9,10 +9,10 @@ import AuthRouter from "./src/routes/authroute.js";
 import UserRouter from "./src/routes/userRoutes.js";
 import cors from 'cors'; // jo request aa rhi hai vo kaha se aa rhi hai kaun bhej rha hai 
 import cookieParser from "cookie-parser";
-import cloudinary from "./src/config/cloudinary.js";
 import PublicRouter from "./src/routes/publicRouter.js";
 import AdminRouter from "./src/routes/adminRoutes.js";
 import hallRouter from "./src/routes/hallRoute.js";
+import BookingRouter from "./src/routes/bookingRoutes.js";
 
 
 
@@ -33,6 +33,7 @@ app.use("/user",UserRouter);
 app.use("/public",PublicRouter);
 app.use("/admin",AdminRouter)
 app.use("/hall", hallRouter)
+app.use("/bookings", BookingRouter);
 
 
 
@@ -52,13 +53,5 @@ app.use((err,req,res,next)=>{ // error handling middleware hai
 
 app.listen(port, async()=>{ // Server start karta hai aur DB se connect hota hai
     console.log("Server started at", port);
-
-    try {
     await connectDB();
-    await cloudinary.api.resources({ max_results: 1 });
-    console.log("Cloudinary Connected");
-  } catch (error) {
-    console.log(error);
-    process.exit(1);
-  }
 });

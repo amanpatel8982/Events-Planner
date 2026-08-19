@@ -5,7 +5,6 @@ import api from "../../config/api";
 import toast from "react-hot-toast";
 import {
   FaEye,
-  FaEdit,
   FaSearch,
   FaFilter,
   FaEnvelope,
@@ -28,18 +27,14 @@ const CustomerQueries = () => {
   const fetchAllCoustomerQueries = async () => {
     try {
       setLoading(true);
-      const res = await api.get("admin/contacts");
-      // toast.success(res.data.message);
-      let x = "message";
-      toast.success(res["data"][x]);
-      setQueries(res.data.data);
+      const res = await api.get("/admin/contacts");
+      setQueries(Array.isArray(res.data?.data) ? res.data.data : []);
     } catch (error) {
       toast.error(
         `Error : ${error.response?.status || error.message} | ${
-          error.response?.data.message || ""
+          error.response?.data?.message || ""
         }`
       );
-      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -61,7 +56,7 @@ const CustomerQueries = () => {
       },
     };
 
-    const config = statusConfig[status] || statusConfig.pending;
+    const config = statusConfig[status] || statusConfig.Pending;
     const IconComponent = config.icon;
 
     return (
@@ -76,7 +71,7 @@ const CustomerQueries = () => {
 
   const filteredQueries = queries.filter((query) => {
     const matchesSearch =
-      query.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (query.fullName || query.name)?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       query.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       query.phone?.includes(searchTerm);
 
@@ -106,19 +101,20 @@ const CustomerQueries = () => {
 
   return (
     <>
-      <div className="bg-gray-50 min-h-[87vh] p-6 overflow-y-auto">
+      <div className="mx-auto min-h-[80vh] max-w-7xl overflow-y-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
+          <p className="text-xs font-bold uppercase text-[var(--rose)]">Customer care</p>
+          <h1 className="mt-2 font-serif text-3xl sm:text-4xl">
             Customer Queries
           </h1>
-          <p className="text-gray-600">
+          <p className="mt-2 text-sm text-[var(--muted)]">
             Manage and respond to customer inquiries
           </p>
         </div>
 
         {/* Filters and Search */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+        <div className="mb-6 rounded-lg border border-[var(--line)] bg-white p-5 shadow-sm">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="flex-1 relative">
               <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -127,7 +123,7 @@ const CustomerQueries = () => {
                 placeholder="Search by name, email, or phone..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                className="field-control pl-10"
               />
             </div>
             <div className="flex items-center gap-2">
@@ -135,7 +131,7 @@ const CustomerQueries = () => {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                className="field-control"
               >
                 <option value="all">All Status</option>
                 <option value="Pending">Pending</option>
@@ -147,27 +143,27 @@ const CustomerQueries = () => {
         </div>
 
         {/* Queries Table */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="overflow-hidden rounded-lg border border-[var(--line)] bg-white shadow-sm">
           {filteredQueries.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-gray-200">
+                <thead className="border-b border-[var(--line)] bg-[#f5f7f5]">
                   <tr>
                     <th className="text-left px-6 py-4 font-semibold text-gray-700">
                       <div className="flex items-center gap-2">
-                        <FaUser className="text-indigo-600" />
+                        <FaUser className="text-[var(--sage)]" />
                         Customer
                       </div>
                     </th>
                     <th className="text-left px-6 py-4 font-semibold text-gray-700">
                       <div className="flex items-center gap-2">
-                        <FaEnvelope className="text-indigo-600" />
+                        <FaEnvelope className="text-[var(--sage)]" />
                         Email
                       </div>
                     </th>
                     <th className="text-left px-6 py-4 font-semibold text-gray-700">
                       <div className="flex items-center gap-2">
-                        <FaPhone className="text-indigo-600" />
+                        <FaPhone className="text-[var(--sage)]" />
                         Phone
                       </div>
                     </th>
@@ -180,19 +176,19 @@ const CustomerQueries = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {filteredQueries.map((query, index) => (
+                  {filteredQueries.map((query) => (
                     <tr
-                      key={index}
+                      key={query._id || query.email}
                       className="hover:bg-gray-50 transition-colors"
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
-                            {query.name?.charAt(0).toUpperCase()}
+                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--sage)] font-semibold text-white">
+                            {(query.fullName || query.name)?.charAt(0).toUpperCase()}
                           </div>
                           <div>
                             <div className="font-medium text-gray-900">
-                              {query.name}
+                              {query.fullName || query.name}
                             </div>
                             <div className="text-sm text-gray-500">
                               Customer
@@ -209,7 +205,7 @@ const CustomerQueries = () => {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => handleViewQuery(query)}
-                            className="px-3 py-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors flex gap-3 items-center"
+                            className="flex items-center gap-2 rounded-lg px-3 py-2 font-semibold text-[var(--rose)] transition-colors hover:bg-[#f8eaee]"
                           >
                             <FaEye /> View Details
                           </button>

@@ -1,89 +1,121 @@
-import React from "react";
-import { useState } from "react";
-import { FaEye, FaTrashAlt, FaEdit } from "react-icons/fa";
-import { IoAddCircleOutline } from "react-icons/io5";
-import AddBanquetHall from "./modals/AddBanquetHallmodel.jsx";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Building2, Plus, Search } from "lucide-react";
+import api from "../../config/api";
+import AddBanquetHall from "./modals/AddBanquetHallmodel";
+import EmptyState from "./EmptyState";
 
 const BanquetHall = () => {
-  const [banquetHalls, setBanquetHall] = useState("");
-  const [addBanquetHallModal, setAddBanquetHallModal] = useState(false);
-  const [viewBanquetHallModal, setViewBanquetHallModal] = useState(false);
-  const [editBanquetHallModal, setEditBanquetHallModal] = useState(false);
-  const [deleteBanquetHallModal, setDeleteBanquetHallModal] = useState(false);
+  const [banquetHalls, setBanquetHalls] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [isAddOpen, setIsAddOpen] = useState(false);
+
+  const loadVenues = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await api.get("/hall/hall");
+      setBanquetHalls(Array.isArray(response.data?.data) ? response.data.data : []);
+    } catch {
+      setBanquetHalls([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadVenues();
+  }, [loadVenues]);
+
+  const visibleVenues = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    if (!term) return banquetHalls;
+    return banquetHalls.filter((hall) =>
+      [hall.hallName, hall.managerName, hall.contactNumber]
+        .filter(Boolean)
+        .some((value) => String(value).toLowerCase().includes(term)),
+    );
+  }, [banquetHalls, search]);
 
   return (
-    <>
-      <div className="px-4 mt-3 flex justify-between">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Banquet Halls</h2>
-        <button
-          className="border rounded px-4 flex gap-3 items-center text-lg border-green-500 bg-green-500 text-white hover:bg-transparent hover:text-green-500"
-          onClick={() => setAddBanquetHallModal(true)}
-        >
-          {" "}
-          <IoAddCircleOutline /> Add New Hall
+    <div className="mx-auto max-w-7xl">
+      <header className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-xs font-bold uppercase text-[var(--rose)]">Partner network</p>
+          <h1 className="mt-2 font-serif text-3xl sm:text-4xl">Venue directory</h1>
+          <p className="mt-2 text-sm text-[var(--muted)]">
+            Keep capacity, commercial, and venue contact details easy to compare.
+          </p>
+        </div>
+        <button type="button" onClick={() => setIsAddOpen(true)} className="button-primary">
+          <Plus size={18} /> Add venue
         </button>
-      </div>
-      <div className="m-3">
-        <table className="min-w-full bg-white rounded-lg p-2">
-          <thead>
-            <tr className="bg-blue-500 text-white">
-              <th className="py-3 px-4  text-left">Hall Name</th>
-              <th className="py-3 px-4  text-left">Manager Name</th>
-              <th className="py-3 px-4  text-left">Contact Number</th>
-              <th className="py-3 px-4  text-left">Capacity</th>
-              <th className="py-3 px-4  text-left">Rent</th>
-              <th className="py-3 px-4  text-left">Action</th>
-            </tr>
-          </thead>
-          <tbody className="p-4">
-            {banquetHalls.length > 0 ? (
-              banquetHalls.map((hall, index) => (
-                <tr className="hover:bg-gray-50" key={index}>
-                  <td className="py-2 px-4 ">{hall.hallName}</td>
-                  <td className="py-2 px-4 ">{hall.managerName}</td>
-                  <td className="py-2 px-4 ">{hall.contactNumber}</td>
-                  <td className="py-2 px-4 ">{hall.capacity}</td>
-                  <td className="py-2 px-4 ">₹{hall.rent}</td>
-                  <td className="py-2 px-4  space-x-2">
-                    <button
-                      className=" text-blue-400 px-3 py-1 rounded hover:text-blue-600"
-                      onClick={() => setViewBanquetHallModal(true)}
-                    >
-                      <FaEye />
-                    </button>
-                    <button
-                      className=" text-yellow-400 px-3 py-1 rounded hover:text-yellow-600"
-                      onClick={() => setEditBanquetHallModal(true)}
-                    >
-                      <FaEdit />
-                    </button>
-                    <button
-                      className=" text-red-400 px-3 py-1 rounded hover:text-red-600"
-                      onClick={() => setDeleteBanquetHallModal(true)}
-                    >
-                      <FaTrashAlt />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <>
+      </header>
+
+      <section className="surface-panel mt-8 overflow-hidden">
+        <div className="border-b border-[var(--line)] p-4">
+          <label className="relative block max-w-md">
+            <span className="sr-only">Search venues</span>
+            <Search size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#929995]" />
+            <input
+              type="search"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              className="field-control pl-10"
+              placeholder="Search venue, manager, or phone"
+            />
+          </label>
+        </div>
+
+        {loading ? (
+          <div className="grid min-h-64 place-items-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--line)] border-t-[var(--rose)]" />
+          </div>
+        ) : visibleVenues.length === 0 ? (
+          <EmptyState
+            icon={Building2}
+            title={search ? "No matching venues" : "No venues added yet"}
+            description={
+              search
+                ? "Try a different venue name, manager, or phone number."
+                : "Add your first venue partner to begin building the event sourcing directory."
+            }
+          />
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-190 text-left text-sm">
+              <thead className="bg-[#f5f7f5] text-xs font-bold uppercase text-[var(--muted)]">
                 <tr>
-                  <td colSpan={6} className="text-center p-3 text-red-500">
-                    --No Banquets Halls are available --
-                  </td>
+                  <th className="px-5 py-4">Venue</th>
+                  <th className="px-5 py-4">Manager</th>
+                  <th className="px-5 py-4">Contact</th>
+                  <th className="px-5 py-4">Capacity</th>
+                  <th className="px-5 py-4">Rent</th>
                 </tr>
-              </>
-            )}
-          </tbody>
-        </table>
-      </div>
+              </thead>
+              <tbody className="divide-y divide-[var(--line)]">
+                {visibleVenues.map((hall) => (
+                  <tr key={hall._id || hall.hallName} className="hover:bg-[#fafbfa]">
+                    <td className="px-5 py-4 font-bold">{hall.hallName}</td>
+                    <td className="px-5 py-4 text-[var(--muted)]">{hall.managerName || "—"}</td>
+                    <td className="px-5 py-4 text-[var(--muted)]">{hall.contactNumber || "—"}</td>
+                    <td className="px-5 py-4 text-[var(--muted)]">{hall.capacity || "—"}</td>
+                    <td className="px-5 py-4 font-semibold">
+                      {hall.rent ? `₹${Number(hall.rent).toLocaleString("en-IN")}` : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
 
       <AddBanquetHall
-        isOpen={addBanquetHallModal}
-        onClose={() => setAddBanquetHallModal(false)}
+        isOpen={isAddOpen}
+        onClose={() => setIsAddOpen(false)}
+        onCreated={loadVenues}
       />
-    </>
+    </div>
   );
 };
 

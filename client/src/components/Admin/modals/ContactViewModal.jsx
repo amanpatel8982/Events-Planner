@@ -14,9 +14,8 @@ import toast from "react-hot-toast";
 
 const ContactViewModal = ({ isOpen, onClose, Query }) => {
   const [query, setQuery] = useState({
-    name: "",
+    fullName: "",
     email: "",
-    subject: "",
     message: "",
     phone: "",
     status: "Pending",
@@ -75,7 +74,7 @@ const ContactViewModal = ({ isOpen, onClose, Query }) => {
 
     setLoading(true);
     try {
-      const res = await api.put(`/admin/contacts/${query._id}`, {
+      await api.put(`/admin/contacts/${query._id}`, {
         status: updateData.status,
         reply: updateData.reply,
       });
@@ -101,19 +100,19 @@ const ContactViewModal = ({ isOpen, onClose, Query }) => {
   return (
     <>
       <div
-        className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm top-20"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
         onClick={onClose}
       >
         <div
-          className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto"
+          className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white shadow-2xl"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-t-2xl p-6 text-white">
+          <div className="rounded-t-lg bg-[#23362c] p-5 text-white sm:p-6">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-xl font-bold">
-                  {query.name?.charAt(0)?.toUpperCase()}
+                  {(query.fullName || query.name)?.charAt(0)?.toUpperCase()}
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold">Query Details</h3>
@@ -150,7 +149,7 @@ const ContactViewModal = ({ isOpen, onClose, Query }) => {
                     Customer Name
                   </label>
                   <p className="text-lg font-medium text-gray-900">
-                    {query.name}
+                    {query.fullName || query.name}
                   </p>
                 </div>
 
@@ -172,9 +171,13 @@ const ContactViewModal = ({ isOpen, onClose, Query }) => {
 
                 <div className="bg-gray-50 rounded-lg p-4">
                   <label className="block text-sm font-semibold text-gray-600 mb-1">
-                    Subject
+                    Submitted
                   </label>
-                  <p className="text-gray-900">{query.subject}</p>
+                  <p className="text-gray-900">
+                    {query.createdAt
+                      ? new Date(query.createdAt).toLocaleDateString("en-IN")
+                      : "Not available"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -192,7 +195,7 @@ const ContactViewModal = ({ isOpen, onClose, Query }) => {
             {/* Admin Response Section */}
             <div className="border-t-2 border-gray-200 pt-6">
               <h4 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <FaEdit className="text-indigo-600" />
+                <FaEdit className="text-[var(--rose)]" />
                 Admin Response
               </h4>
 
@@ -206,12 +209,12 @@ const ContactViewModal = ({ isOpen, onClose, Query }) => {
                     name="status"
                     value={updateData.status}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
+                    className="field-control"
                     disabled={Query.status !== "Pending"}
                   >
-                    <option value="Pending">🟡 Pending</option>
-                    <option value="Resolved">🟢 Resolved</option>
-                    <option value="Rejected">🔴 Rejected</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Resolved">Resolved</option>
+                    <option value="Rejected">Rejected</option>
                   </select>
                 </div>
                 {/* Reply Message */}
@@ -225,7 +228,7 @@ const ContactViewModal = ({ isOpen, onClose, Query }) => {
                     onChange={handleInputChange}
                     placeholder="Write your response to the customer..."
                     rows="4"
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all resize-none"
+                    className="field-control min-h-28 resize-none"
                     disabled={Query.status !== "Pending"}
                   />
                 </div>
@@ -245,7 +248,7 @@ const ContactViewModal = ({ isOpen, onClose, Query }) => {
                       !updateData.reply.trim() ||
                       Query.status !== "Pending"
                     }
-                    className="flex-1 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium flex items-center justify-center gap-2"
+                    className="button-primary flex-1 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {loading ? (
                       <>

@@ -2,12 +2,21 @@ import React, { useContext, useEffect, useState } from "react";
 
 const AuthContext = React.createContext();
 
+const getStoredUser = () => {
+  try {
+    return JSON.parse(sessionStorage.getItem("EventUser")) || "";
+  } catch {
+    sessionStorage.removeItem("EventUser");
+    return "";
+  }
+};
+
 export const AuthProvider = (props) => {
-  const [user, setUser] = useState(
-    JSON.parse(sessionStorage.getItem("EventUser")) || ""
+  const [user, setUser] = useState(getStoredUser);
+  const [isLogin, setIsLogin] = useState(() => Boolean(getStoredUser()));
+  const [isAdmin, setIsAdmin] = useState(
+    () => getStoredUser()?.role === "Admin",
   );
-  const [isLogin, setIsLogin] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     setIsLogin(!!user);
@@ -28,6 +37,7 @@ export const AuthProvider = (props) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   return useContext(AuthContext);
 };

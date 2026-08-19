@@ -1,248 +1,123 @@
-import React, { useState } from "react";
-import { IoCloseCircle } from "react-icons/io5";
-import api from "../../../config/api";
+import { useEffect, useState } from "react";
+import { Building2, Save, X } from "lucide-react";
 import toast from "react-hot-toast";
+import api from "../../../config/api";
 
-const AddBanquetHall = ({ isOpen, onClose }) => {
-  const [banquetHallData, setBanquetHallData] = useState({
-    hallName: "",
-    address: "",
-    capacity: "",
-    managerName: "",
-    contactNumber: "",
-    email: "",
-    rent: "",
-    minBookingAmount: "",
-    featureDescription: "",
-  });
+const initialForm = {
+  hallName: "",
+  managerName: "",
+  contactNumber: "",
+  capacity: "",
+  rent: "",
+};
 
-  const [preview, setPreview] = useState([]);
-  const [photos, setPhotos] = useState({});
+const AddBanquetHall = ({ isOpen, onClose, onCreated }) => {
+  const [form, setForm] = useState(initialForm);
+  const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    console.log({ name, value });
-    setBanquetHallData((previousData) => ({ ...previousData, [name]: value }));
-  };
-
-  const handlePhotoChange = (e) => {
-    const Images = e.target.files;
-    setPhotos(Images);
-    setPreview([]);
-    Array.from(Images).forEach((image) => {
-      const imageURL = URL.createObjectURL(image);
-      console.log(imageURL);
-      setPreview((previousData) => [...previousData, imageURL]);
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const formData = new FormData();
-    formData.append("hallName", banquetHallData.hallName);
-    formData.append("address", banquetHallData.address);
-    formData.append("capacity", banquetHallData.capacity);
-    formData.append("managerName", banquetHallData.managerName);
-    formData.append("contactNumber", banquetHallData.contactNumber);
-    formData.append("email", banquetHallData.email);
-    formData.append("rent", banquetHallData.rent);
-    formData.append("minBookingAmount", banquetHallData.minBookingAmount);
-    formData.append("featureDescription", banquetHallData.featureDescription);
-
-    if (photos && photos.length > 0) {
-      Array.from(photos).forEach((photo) => {
-        formData.append("pictures", photo);
-      });
-    }
-
-    console.log(formData.pictures);
-
-    try {
-      const res = await api.post("/admin/AddBanquetHall", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      toast.success(res.data.message);
-      console.log(res.data.data);
-    } catch (error) {
-      toast.error(
-        `Error : ${error.response?.status || error.message} | ${
-          error.response?.data.message || ""
-        }`
-      );
-      console.log(error);
-    }
-  };
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setForm((current) => ({ ...current, [name]: value }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+    try {
+      const response = await api.post("/hall/add", form);
+      toast.success(response.data?.message || "Venue added.");
+      setForm(initialForm);
+      onClose();
+      await onCreated?.();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "The venue could not be added.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fields = [
+    { name: "hallName", label: "Venue name", type: "text", placeholder: "The Grand Pavilion" },
+    { name: "managerName", label: "Manager name", type: "text", placeholder: "Primary venue contact" },
+    { name: "contactNumber", label: "Contact number", type: "tel", placeholder: "+91 98765 43210" },
+    { name: "capacity", label: "Guest capacity", type: "number", placeholder: "350" },
+    { name: "rent", label: "Venue rent (₹)", type: "number", placeholder: "250000" },
+  ];
+
   return (
-    <>
-      <div className="fixed inset-0 bg-black/50 ">
-        <div className="mt-30 mx-auto  w-1/2 min-h-[80vh] bg-white rounded-lg">
-          <div className="p-3 flex justify-between border-b-2">
-            <h1 className="text-xl font-bold">Add Banquet Hall</h1>
+    <div
+      className="fixed inset-0 z-50 grid place-items-center bg-black/55 p-4 backdrop-blur-sm"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <div
+        className="w-full max-w-xl overflow-hidden rounded-lg bg-white shadow-2xl"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="add-venue-title"
+      >
+        <header className="flex items-center justify-between border-b border-[var(--line)] px-5 py-4">
+          <div className="flex items-center gap-3">
+            <span className="grid h-10 w-10 place-items-center rounded-lg bg-[#edf2ee] text-[var(--sage)]">
+              <Building2 size={20} />
+            </span>
+            <div>
+              <h2 id="add-venue-title" className="font-serif text-xl">Add a venue</h2>
+              <p className="text-xs text-[var(--muted)]">Core sourcing details</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="grid h-9 w-9 place-items-center rounded-lg hover:bg-black/5"
+            aria-label="Close venue form"
+          >
+            <X size={20} />
+          </button>
+        </header>
+
+        <form onSubmit={handleSubmit} className="grid max-h-[75vh] gap-4 overflow-y-auto p-5 sm:grid-cols-2 sm:p-6">
+          {fields.map((field, index) => (
+            <div key={field.name} className={index < 3 ? "sm:col-span-2" : ""}>
+              <label htmlFor={`venue-${field.name}`} className="field-label">{field.label}</label>
+              <input
+                id={`venue-${field.name}`}
+                name={field.name}
+                type={field.type}
+                value={form[field.name]}
+                onChange={handleChange}
+                placeholder={field.placeholder}
+                className="field-control"
+                min={field.type === "number" ? "0" : undefined}
+                required
+              />
+            </div>
+          ))}
+          <div className="mt-2 flex flex-col-reverse gap-2 border-t border-[var(--line)] pt-5 sm:col-span-2 sm:flex-row sm:justify-end">
+            <button type="button" onClick={onClose} className="button-secondary">Cancel</button>
             <button
-              className="text-3xl text-red-400 hover:text-red-500"
-              onClick={onClose}
+              type="submit"
+              disabled={loading}
+              className="button-primary disabled:cursor-not-allowed disabled:opacity-60"
             >
-              <IoCloseCircle />
+              <Save size={17} /> {loading ? "Saving..." : "Save venue"}
             </button>
           </div>
-
-          <div className="h-[70vh] overflow-y-auto ">
-            <form
-              className="mx-auto p-6 bg-white rounded-lg shadow-md space-y-4"
-              onSubmit={handleSubmit}
-            >
-              <div className="flex gap-3">
-                <div className="w-2/3">
-                  <label className="block mb-1 font-medium">Hall Name</label>
-                  <input
-                    type="text"
-                    name="hallName"
-                    required
-                    value={banquetHallData.hallName}
-                    onChange={handleChange}
-                    className="w-full border px-3 py-2 rounded"
-                  />
-                </div>
-
-                <div className="w-1/3">
-                  <label className="block mb-1 font-medium">Capacity</label>
-                  <input
-                    type="text"
-                    name="capacity"
-                    required
-                    value={banquetHallData.capacity}
-                    onChange={handleChange}
-                    className="w-full border px-3 py-2 rounded"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block mb-1 font-medium">Address</label>
-                <textarea
-                  name="address"
-                  required
-                  onChange={handleChange}
-                  value={banquetHallData.address}
-                  className="w-full border px-3 py-2 rounded"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-1 font-medium">Manager Name</label>
-                <input
-                  type="text"
-                  name="managerName"
-                  required
-                  onChange={handleChange}
-                  value={banquetHallData.managerName}
-                  className="w-full border px-3 py-2 rounded"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-1 font-medium">Contact Number</label>
-                <input
-                  type="text"
-                  name="contactNumber"
-                  required
-                  onChange={handleChange}
-                  value={banquetHallData.contactNumber}
-                  className="w-full border px-3 py-2 rounded"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-1 font-medium">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  required
-                  onChange={handleChange}
-                  value={banquetHallData.email}
-                  className="w-full border px-3 py-2 rounded"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block mb-1 font-medium">Rent</label>
-                  <input
-                    type="text"
-                    name="rent"
-                    required
-                    onChange={handleChange}
-                    value={banquetHallData.rent}
-                    className="w-full border px-3 py-2 rounded"
-                  />
-                </div>
-
-                <div>
-                  <label className="block mb-1 font-medium">
-                    Minimum Booking Amount
-                  </label>
-                  <input
-                    type="text"
-                    name="minBookingAmount"
-                    required
-                    onChange={handleChange}
-                    value={banquetHallData.minBookingAmount}
-                    className="w-full border px-3 py-2 rounded"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block mb-1 font-medium">
-                  Feature Description
-                </label>
-                <textarea
-                  name="featureDescription"
-                  required
-                  onChange={handleChange}
-                  value={banquetHallData.featureDescription}
-                  className="w-full border px-3 py-2 rounded"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-1 font-medium">
-                  Photos (Max: 5 Photos, Size: &lt;1MB/photo)
-                </label>
-                <input
-                  type="file"
-                  name="photos"
-                  accept="image/*"
-                  className="w-full"
-                  onChange={handlePhotoChange}
-                  multiple
-                />
-              </div>
-
-              <div className=" grid grid-cols-4 gap-2">
-                {preview.length > 0 &&
-                  preview.map((image, index) => (
-                    <img src={image} key={index} />
-                  ))}
-              </div>
-
-              <button
-                type="submit"
-                className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
-              >
-                Submit
-              </button>
-            </form>
-          </div>
-        </div>
+        </form>
       </div>
-    </>
+    </div>
   );
 };
 
